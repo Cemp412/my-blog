@@ -20,6 +20,8 @@ class CreateProductsTable extends Migration
             $table->string('brand');
             $table->string('desc');
             $table->string('price');
+            $table->string('image')->default('0');
+            $table->string('imgpath')->default('0');
             $table->timestamps();
         });
     }

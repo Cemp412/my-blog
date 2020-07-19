@@ -9,12 +9,13 @@ use App\Product;
 class ProductController extends Controller
 {
     public function add(Request $request){
+        header("Access-Control-Allow-Origin: *");
     	$validator=Validator::make($request->all(),[
     		'name'=>'required',
     		'category'=>'required',
     		'brand'=>'required',
     		'desc'=>'required',
-    		// 'image'=>'required|image',
+    		'image'=>'required',
     		'price'=>'required',
     	]);
 
@@ -29,7 +30,23 @@ class ProductController extends Controller
         $p->brand = $request->brand;
         $p->desc = $request->desc;
         $p->price = $request->price;
-        $p->save();
+        
+
+        // php artisan storage:link   {Image link command to storage}
+            // outside  storage/public -> andar new folder banana h jese products(for image)
+            //config/filesytem.php -> local rewrite as public (local, public)
+
+        $url="http://127.0.0.1:8000/storage/";
+          $file=$request->file('image');
+         $extension=$file->getClientOriginalExtension();
+          // dd($extension);
+          // exit;
+          $path=$request->file('image')->storeAs('products', $p->id.'.'.$extension);
+           // dd($extension);
+           // exit;    
+          $p->image=$path;
+          $p->imgpath=$url.$path;
+          $p->save();
 
         if($p){
                 return response()->json($data=[
@@ -43,7 +60,9 @@ class ProductController extends Controller
                 'status'=>203,
                 'msg'=>'something went wrong'
                ]);
-            } 
+            }
+
+             
         
     }
 
